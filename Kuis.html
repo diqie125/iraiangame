@@ -7,6 +7,20 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+
+<nav class="bg-blue-600 p-4 fixed top-0 w-full shadow-md z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-white text-lg font-bold">IrainGame</a>
+            <button id="menu-toggle" class="md:hidden text-white focus:outline-none">☰</button>
+            <ul id="menu" class="hidden md:flex space-x-4 text-white">
+                <li><a href="index.html" class="hover:underline">Beranda</a></li>
+                <li><a href="#" class="hover:underline">Tentang</a></li>
+                <li><a href="#" class="hover:underline">Layanan</a></li>
+                <li><a href="#" class="hover:underline">Kontak</a></li>
+            </ul>
+        </div>
+        
+
     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl text-center">
         <h1 class="text-2xl font-bold mb-4 text-blue-600">Kuis Sejarah Indonesia</h1>
         <p id="question" class="text-lg font-semibold mb-4"></p>
@@ -88,6 +102,11 @@
     }
     
     loadQuestion();
+
+document.getElementById('menu-toggle').addEventListener('click', function () {
+            let mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
 </script>
 
 </body>
