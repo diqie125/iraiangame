@@ -20,8 +20,10 @@
                 <li><a href="#" class="hover:underline">Kontak</a></li>
             </ul>
         </div>
-        <ul id="mobile-menu" class="md:hidden hidden bg-blue-500 text-white p-4">
-            <li><a href="#" class="block py-2 hover:underline">Beranda</a></li>
+        
+        <!-- Mobile Menu -->
+        <ul id="mobile-menu" class="hidden bg-blue-500 text-white p-4 md:hidden">
+            <li><a href="index.html" class="block py-2 hover:underline">Beranda</a></li>
             <li><a href="#" class="block py-2 hover:underline">Tentang</a></li>
             <li><a href="#" class="block py-2 hover:underline">Layanan</a></li>
             <li><a href="#" class="block py-2 hover:underline">Kontak</a></li>
@@ -140,6 +142,11 @@
 
         acakGambar();
         mulaiTimer();
+        
+        document.getElementById('menu-toggle').addEventListener('click', function () {
+            let mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
     </script>
 </body>
 </html>
