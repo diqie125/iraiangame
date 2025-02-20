@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tebak Gambar Pahlawan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-blue-600 p-4 fixed top-0 w-full shadow-md z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-white text-lg font-bold">IrainGame</a>
+            <button id="menu-toggle" class="md:hidden text-white focus:outline-none">☰</button>
+            <ul id="menu" class="hidden md:flex space-x-4 text-white">
+                <li><a href="index.html" class="hover:underline">Beranda</a></li>
+                <li><a href="#" class="hover:underline">Tentang</a></li>
+                <li><a href="#" class="hover:underline">Layanan</a></li>
+                <li><a href="#" class="hover:underline">Kontak</a></li>
+            </ul>
+        </div>
+        <ul id="mobile-menu" class="md:hidden hidden bg-blue-500 text-white p-4">
+            <li><a href="#" class="block py-2 hover:underline">Beranda</a></li>
+            <li><a href="#" class="block py-2 hover:underline">Tentang</a></li>
+            <li><a href="#" class="block py-2 hover:underline">Layanan</a></li>
+            <li><a href="#" class="block py-2 hover:underline">Kontak</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Konten Game -->
+    <div class="flex flex-grow justify-center items-center mt-20 p-4">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center w-full max-w-2xl flex flex-col items-center">
+            <h1 class="text-2xl font-bold mb-4 text-blue-600">Tebak Gambar Pahlawan</h1>
+            <img id="pahlawan-img" src="" alt="Gambar Pahlawan" class="w-full h-60 sm:h-80 md:h-96 object-cover rounded-lg mb-4 border">
+            <input type="text" id="jawaban" placeholder="Masukkan nama pahlawan" class="border p-3 w-full rounded-lg mb-4 text-center text-gray-700">
+            <button onclick="cekJawaban()" class="bg-green-600 text-white p-3 w-full rounded-lg hover:bg-green-700 transition">Submit</button>
+            <button id="pause-button" onclick="pauseGame()" class="bg-red-500 text-white p-3 w-full rounded-lg mt-2 hover:bg-red-600 transition">Pause</button>
+            <p id="timer" class="mt-4 text-gray-600 text-lg">Waktu: <span id="waktu">120</span> detik</p>
+        </div>
+    </div>
+
+    <script>
+        const gambarPahlawan = [
+            { src: 'pattimura.webp', nama: 'Pattimura', ditebak: false },
+            { src: 'jendral_sudirman.webp', nama: 'Jendral Sudirman', ditebak: false },
+            { src: 'pangeran_diponegoro.webp', nama: 'Pangeran Diponegoro', ditebak: false }
+        ];
+        
+        let waktu = 120;
+        let timer;
+        let isPaused = false;
+        let currentPahlawan;
+        
+        function mulaiTimer() {
+            timer = setInterval(() => {
+                if (!isPaused) {
+                    waktu--;
+                    document.getElementById('waktu').textContent = waktu;
+                    if (waktu === 0) {
+                        clearInterval(timer);
+                        Swal.fire({
+                            title: 'Game Over!',
+                            text: 'Waktu Habis! Coba Lagi?',
+                            icon: 'error',
+                            confirmButtonText: 'Mulai Ulang'
+                        }).then(() => {
+                            resetGame();
+                        });
+                    }
+                }
+            }, 1000);
+        }
+
+        function acakGambar() {
+            let gambarBelumDitebak = gambarPahlawan.filter(p => !p.ditebak);
+            
+            if (gambarBelumDitebak.length === 0) {
+                clearInterval(timer);
+                Swal.fire({
+                    title: 'Selamat!',
+                    text: 'Anda telah menebak semua gambar dengan benar!',
+                    icon: 'success',
+                    confirmButtonText: 'Mulai Ulang'
+                }).then(() => {
+                    resetGame();
+                });
+                return;
+            }
+            
+            currentPahlawan = gambarBelumDitebak[Math.floor(Math.random() * gambarBelumDitebak.length)];
+            document.getElementById('pahlawan-img').src = currentPahlawan.src;
+            document.getElementById('jawaban').value = '';
+        }
+
+        function cekJawaban() {
+            let jawaban = document.getElementById('jawaban').value.trim().toLowerCase();
+            if (jawaban === currentPahlawan.nama.toLowerCase()) {
+                currentPahlawan.ditebak = true;
+                Swal.fire({
+                    title: 'Benar!',
+                    text: 'Jawaban Anda benar! Lanjut ke gambar berikutnya.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    acakGambar();
+                });
+            } else {
+                Swal.fire({
+                    title: 'Salah!',
+                    text: 'Coba lagi!',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+
+        function pauseGame() {
+            isPaused = !isPaused;
+            document.getElementById('jawaban').disabled = isPaused;
+            document.getElementById('pause-button').textContent = isPaused ? 'Mulai Kembali' : 'Pause';
+            Swal.fire({
+                title: isPaused ? 'Game Dijeda' : 'Game Dilanjutkan',
+                text: isPaused ? 'Klik OK untuk melanjutkan' : 'Waktu berjalan kembali',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
+        }
+
+        function resetGame() {
+            waktu = 120;
+            document.getElementById('waktu').textContent = waktu;
+            isPaused = false;
+            document.getElementById('pause-button').textContent = 'Pause';
+            document.getElementById('jawaban').disabled = false;
+            gambarPahlawan.forEach(p => p.ditebak = false);
+            acakGambar();
+            mulaiTimer();
+        }
+
+        acakGambar();
+        mulaiTimer();
+    </script>
+</body>
+</html>
