@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Sejarah Indonesia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl text-center">
+        <h1 class="text-2xl font-bold mb-4 text-blue-600">Kuis Sejarah Indonesia</h1>
+        <p id="question" class="text-lg font-semibold mb-4"></p>
+        <div id="options" class="grid grid-cols-1 gap-4"></div>
+        <p class="mt-4 text-gray-600">Pertanyaan ke-<span id="current-question">1</span>/15</p>
+    </div><script>
+    const questions = [
+        { q: "Siapa proklamator kemerdekaan Indonesia?", options: ["Soekarno dan Hatta", "Diponegoro dan Pattimura", "Sudirman dan Soedirman"], a: "Soekarno dan Hatta" },
+        { q: "Pada tahun berapa Indonesia merdeka?", options: ["1940", "1945", "1950"], a: "1945" },
+        { q: "Siapa pahlawan nasional yang memimpin perang Diponegoro?", options: ["Diponegoro", "Imam Bonjol", "Cut Nyak Dien"], a: "Diponegoro" },
+        { q: "Apa nama teks proklamasi kemerdekaan Indonesia?", options: ["Piagam Jakarta", "Manifesto Politik", "Proklamasi Kemerdekaan"], a: "Proklamasi Kemerdekaan" },
+        { q: "Apa nama ibu kota Indonesia sebelum Jakarta?", options: ["Surabaya", "Yogyakarta", "Bandung"], a: "Yogyakarta" },
+        { q: "Siapa yang dikenal sebagai Bapak Pendidikan Nasional?", options: ["Ki Hajar Dewantara", "RA Kartini", "Hasyim Asy'ari"], a: "Ki Hajar Dewantara" },
+        { q: "Perang Padri terjadi di daerah mana?", options: ["Aceh", "Sumatera Barat", "Bali"], a: "Sumatera Barat" },
+        { q: "Siapa pemimpin revolusi fisik di Indonesia?", options: ["Sudirman", "Soekarno", "Hatta"], a: "Sudirman" },
+        { q: "Pada tanggal berapa Sumpah Pemuda dideklarasikan?", options: ["17 Agustus 1945", "28 Oktober 1928", "10 November 1945"], a: "28 Oktober 1928" },
+        { q: "Apa nama kerajaan Islam pertama di Indonesia?", options: ["Demak", "Samudera Pasai", "Majapahit"], a: "Samudera Pasai" },
+        { q: "Siapa yang membangun Candi Borobudur?", options: ["Mpu Sindok", "Raja Samaratungga", "Hayam Wuruk"], a: "Raja Samaratungga" },
+        { q: "Apa nama perjanjian yang mengakhiri VOC?", options: ["Perjanjian Giyanti", "Perjanjian Renville", "Perjanjian KMB"], a: "Perjanjian KMB" },
+        { q: "Siapa raja terbesar Kerajaan Majapahit?", options: ["Gajah Mada", "Raden Wijaya", "Hayam Wuruk"], a: "Hayam Wuruk" },
+        { q: "Apa nama naskah kuno peninggalan kerajaan Sriwijaya?", options: ["Prasasti Kedukan Bukit", "Kitab Negarakertagama", "Serat Centhini"], a: "Prasasti Kedukan Bukit" },
+        { q: "Siapa pahlawan wanita dari Aceh yang melawan penjajah?", options: ["Cut Nyak Dien", "Martha Christina Tiahahu", "Dewi Sartika"], a: "Cut Nyak Dien" }
+    ];
+    
+    let currentQuestionIndex = 0;
+    let score = 0;
+    
+    function loadQuestion() {
+        if (currentQuestionIndex >= questions.length) {
+            Swal.fire({
+                title: `Kuis Selesai!`,
+                text: `Skor Anda: ${score} / 15`,
+                icon: 'success',
+                confirmButtonText: 'Mulai Ulang'
+            }).then(() => {
+                currentQuestionIndex = 0;
+                score = 0;
+                loadQuestion();
+            });
+            return;
+        }
+        
+        const questionData = questions[currentQuestionIndex];
+        document.getElementById('question').textContent = questionData.q;
+        document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+        
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+        
+        questionData.options.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option;
+            button.className = "bg-blue-500 text-white p-3 rounded-lg w-full hover:bg-blue-700 transition";
+            button.onclick = () => checkAnswer(option);
+            optionsContainer.appendChild(button);
+        });
+    }
+    
+    function checkAnswer(answer) {
+        if (answer === questions[currentQuestionIndex].a) {
+            score++;
+            Swal.fire({
+                title: 'Benar!',
+                icon: 'success',
+                timer: 1000,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                title: 'Salah!',
+                text: `Jawaban yang benar adalah: ${questions[currentQuestionIndex].a}`,
+                icon: 'error',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+        currentQuestionIndex++;
+        setTimeout(loadQuestion, 1200);
+    }
+    
+    loadQuestion();
+</script>
+
+</body>
+</html>
