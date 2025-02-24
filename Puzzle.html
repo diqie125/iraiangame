@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Puzzle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .puzzle-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 2px;
+            width: 306px;
+            margin: auto;
+        }
+        .puzzle-piece {
+            width: 100px;
+            height: 100px;
+            background-size: 300px 300px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+    <h1 class="text-2xl font-bold mb-4 text-blue-600">Game Puzzle Gambar</h1>
+    <div class="puzzle-container" id="puzzleBoard"></div>
+    <button onclick="resetPuzzle()" class="mt-4 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">Reset</button>
+
+    <script>
+        const puzzleBoard = document.getElementById("puzzleBoard");
+        let pieces = [];
+
+        function initPuzzle() {
+            let indexes = [...Array(9).keys()];
+            indexes.sort(() => Math.random() - 0.5);
+            puzzleBoard.innerHTML = "";
+            indexes.forEach((index, position) => {
+                let piece = document.createElement("div");
+                piece.classList.add("puzzle-piece");
+                piece.style.backgroundImage = "url('puzzle.jpg')";
+                piece.style.backgroundPosition = `${-(index % 3) * 100}px ${-Math.floor(index / 3) * 100}px`;
+                piece.dataset.index = index;
+                piece.onclick = () => swapPieces(position);
+                puzzleBoard.appendChild(piece);
+                pieces.push(piece);
+            });
+        }
+
+        function swapPieces(position) {
+            if (position < 8) {
+                [pieces[position].dataset.index, pieces[position + 1].dataset.index] = [pieces[position + 1].dataset.index, pieces[position].dataset.index];
+                puzzleBoard.appendChild(pieces[position + 1]);
+                puzzleBoard.appendChild(pieces[position]);
+                checkWin();
+            }
+        }
+
+        function checkWin() {
+            if (pieces.every((piece, index) => piece.dataset.index == index)) {
+                Swal.fire({ title: "Selamat!", text: "Puzzle selesai!", icon: "success" });
+            }
+        }
+
+        function resetPuzzle() {
+            pieces = [];
+            initPuzzle();
+        }
+
+        initPuzzle();
+    </script>
+</body>
+</html>
