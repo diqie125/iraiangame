@@ -3,72 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Puzzle</title>
+    <title>Puzzle Gambar</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .puzzle-container {
             display: grid;
             grid-template-columns: repeat(3, 100px);
             grid-template-rows: repeat(3, 100px);
-            gap: 2px;
-            width: 306px;
-            margin: auto;
+            gap: 5px;
+            margin-top: 20px;
         }
         .puzzle-piece {
             width: 100px;
             height: 100px;
-            background-size: 300px 300px;
             cursor: pointer;
+            border: 1px solid #000;
+            background-size: 300px 300px;
         }
     </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
-    <h1 class="text-2xl font-bold mb-4 text-blue-600">Game Puzzle Gambar</h1>
-    <div class="puzzle-container" id="puzzleBoard"></div>
-    <button onclick="resetPuzzle()" class="mt-4 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">Reset</button>
-
+<body class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <h1 class="text-2xl font-bold">Puzzle Gambar</h1>
+    <div class="puzzle-container" id="puzzle-container"></div>
+    <button onclick="shufflePuzzle()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Acak Ulang</button>
+    
     <script>
-        const puzzleBoard = document.getElementById("puzzleBoard");
+        const puzzleContainer = document.getElementById('puzzle-container');
         let pieces = [];
 
-        function initPuzzle() {
-            let indexes = [...Array(9).keys()];
-            indexes.sort(() => Math.random() - 0.5);
-            puzzleBoard.innerHTML = "";
-            indexes.forEach((index, position) => {
-                let piece = document.createElement("div");
-                piece.classList.add("puzzle-piece");
+        function createPuzzle() {
+            for (let i = 0; i < 9; i++) {
+                const piece = document.createElement('div');
+                piece.classList.add('puzzle-piece');
                 piece.style.backgroundImage = "url('puzzle.jpg')";
-                piece.style.backgroundPosition = `${-(index % 3) * 100}px ${-Math.floor(index / 3) * 100}px`;
-                piece.dataset.index = index;
-                piece.onclick = () => swapPieces(position);
-                puzzleBoard.appendChild(piece);
+                piece.style.backgroundPosition = `${-(i % 3) * 100}px ${-Math.floor(i / 3) * 100}px`;
+                piece.dataset.index = i;
+                piece.addEventListener('click', () => swapPiece(i));
                 pieces.push(piece);
-            });
-        }
-
-        function swapPieces(position) {
-            if (position < 8) {
-                [pieces[position].dataset.index, pieces[position + 1].dataset.index] = [pieces[position + 1].dataset.index, pieces[position].dataset.index];
-                puzzleBoard.appendChild(pieces[position + 1]);
-                puzzleBoard.appendChild(pieces[position]);
-                checkWin();
+                puzzleContainer.appendChild(piece);
             }
         }
 
-        function checkWin() {
-            if (pieces.every((piece, index) => piece.dataset.index == index)) {
-                Swal.fire({ title: "Selamat!", text: "Puzzle selesai!", icon: "success" });
+        function shufflePuzzle() {
+            pieces.sort(() => Math.random() - 0.5);
+            puzzleContainer.innerHTML = '';
+            pieces.forEach(piece => puzzleContainer.appendChild(piece));
+        }
+
+        function swapPiece(index) {
+            let emptyIndex = pieces.findIndex(piece => !piece.style.backgroundImage);
+            if ([index - 1, index + 1, index - 3, index + 3].includes(emptyIndex)) {
+                [pieces[index], pieces[emptyIndex]] = [pieces[emptyIndex], pieces[index]];
+                puzzleContainer.innerHTML = '';
+                pieces.forEach(piece => puzzleContainer.appendChild(piece));
             }
         }
 
-        function resetPuzzle() {
-            pieces = [];
-            initPuzzle();
-        }
-
-        initPuzzle();
+        createPuzzle();
+        shufflePuzzle();
     </script>
 </body>
 </html>
